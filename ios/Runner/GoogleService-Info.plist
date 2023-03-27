@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>883080707225-t5njb9l3mncesv4dev1c9m4krr2s0df7.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.883080707225-t5njb9l3mncesv4dev1c9m4krr2s0df7</string>
+	<key>API_KEY</key>
+	<string>AIzaSyArBNDspkSdSZZSRfIAjb1LD33j5nBon3s</string>
+	<key>GCM_SENDER_ID</key>
+	<string>883080707225</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.mielevasoApp</string>
+	<key>PROJECT_ID</key>
+	<string>mielevaso-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mielevaso-app.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:883080707225:ios:b0bd04c4b3fa84d2df8c08</string>
+</dict>
+</plist>
