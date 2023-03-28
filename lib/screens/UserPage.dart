@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,10 +19,78 @@ class _UserPageState extends State<UserPage> {
   String _server = '';
   String _guildName = '';
   String _guildPosition = '';
-  String _arena = '';
-  String _selena = '';
+  String _arena = 'hidden';
+  String _selena = 'hidden';
+  List<String> _arenaFields = [];
+  List<String> _realArenaFields = [];
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _isUpdate = false;
+  late String _docId;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _getArenas();
+    _getRealArenas();
+    _checkUser();
+  }
+
+  void _checkUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userData = await FirebaseFirestore.instance
+        .collection('user')
+        .doc(user!.uid)
+        .get();
+
+    if (userData.exists && userData['nickname'] != null && userData['server'] != null) {
+      setState(() {
+        _isUpdate = true;
+        _docId = userData.id;
+        _nickname = userData['nickname'];
+        _rank = userData['rank'];
+        _server = userData['server'];
+        _guildName = userData['guildName'];
+        _guildPosition = userData['guildPosition'];
+        _arena = userData['arena'];
+        _selena = userData['selena'];
+      });
+    } else {
+      setState(() {
+        _isUpdate = false;
+      });
+    }
+  }
+
+  void _getArenas() async {
+    final arenaDocs = await FirebaseFirestore.instance
+        .collection('gv_tiers')
+        .doc('arena')
+        .get();
+    final arenaData = arenaDocs.data() as Map<String, dynamic>;
+    List<String> tiers = arenaData.keys.toList();
+    tiers.sort((a, b) => arenaData[a]['min_pt'].compareTo(arenaData[b]['min_pt']));
+
+    setState(() {
+      _arenaFields = tiers;
+    });
+  }
+
+  void _getRealArenas() async {
+    final realArenaDocs = await FirebaseFirestore.instance
+        .collection('gv_tiers')
+        .doc('real_arena')
+        .get();
+    final realArenaData = realArenaDocs.data() as Map<String, dynamic>;
+    List<String> tiers = realArenaData.keys.toList();
+    tiers.sort((a, b) => realArenaData[a]['min_pt'].compareTo(realArenaData[b]['min_pt']));
+
+    setState(() {
+      _realArenaFields = tiers;
+    });
+  }
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
@@ -28,18 +98,48 @@ class _UserPageState extends State<UserPage> {
 
       // Firebase에 값을 저장
       final user = FirebaseAuth.instance.currentUser;
-      await FirebaseFirestore.instance.collection('user').doc(user!.uid).set({
-        'nickname': _nickname,
-        'rank': _rank,
-        'server': _server,
-        'guildName': _guildName,
-        'guildPosition': _guildPosition,
-        'arena': _arena,
-        'selena': _selena,
-      });
+      final scaffoldContext = scaffoldKey.currentContext; // 변경된 부분
+      if (_isUpdate) {
+        await FirebaseFirestore.instance
+            .collection('user')
+            .doc(_docId)
+            .update({
+          'nickname': _nickname,
+          'rank': _rank,
+          'server': _server,
+          'guildName': _guildName,
+          'guildPosition': _guildPosition,
+          'arena': _arena,
+          'selena': _selena,
+        });
+        if (scaffoldContext != null) {
+          ScaffoldMessenger.of(scaffoldContext!).showSnackBar(
+            SnackBar(
+              content: Text('성공적으로 업데이트 되었습니다.'),
+            ),
+          );
+        }
+      } else {
+        await FirebaseFirestore.instance.collection('user').doc(user!.uid).set({
+          'nickname': _nickname,
+          'rank': _rank,
+          'server': _server,
+          'guildName': _guildName,
+          'guildPosition': _guildPosition,
+          'arena': _arena,
+          'selena': _selena,
+        });
+        if (scaffoldContext != null) {
+          ScaffoldMessenger.of(scaffoldContext!).showSnackBar(
+            SnackBar(
+              content: Text('성공적으로 생성 되었습니다.'),
+            ),
+          );
+        }
+      }
 
       // 다이얼로그 닫기
-      Navigator.of(context).pop();
+      Navigator.of(scaffoldContext!).pop();
     }
   }
 
@@ -59,7 +159,7 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(_isUpdate ? 'Update Form' : 'User Information'),
       ),
       body: Center(
         child: ElevatedButton(
@@ -68,7 +168,7 @@ class _UserPageState extends State<UserPage> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text('User Information'),
+                  title: Text(_isUpdate ? 'Update Form' : 'User Information'),
                   content: SingleChildScrollView(
                     child: Form(
                       key: _formKey,
@@ -77,6 +177,7 @@ class _UserPageState extends State<UserPage> {
                         children: [
                           TextFormField(
                             decoration: InputDecoration(labelText: 'Nickname'),
+                            initialValue: _nickname,
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a nickname';
@@ -89,6 +190,7 @@ class _UserPageState extends State<UserPage> {
                           ),
                           TextFormField(
                             decoration: InputDecoration(labelText: 'Rank'),
+                            initialValue: _rank,
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a rank';
@@ -101,6 +203,7 @@ class _UserPageState extends State<UserPage> {
                           ),
                           TextFormField(
                             decoration: InputDecoration(labelText: 'Server'),
+                            initialValue: _server,
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a server';
@@ -113,7 +216,8 @@ class _UserPageState extends State<UserPage> {
                           ),
                           TextFormField(
                             decoration:
-                                InputDecoration(labelText: 'Guild Name'),
+                            InputDecoration(labelText: 'Guild Name'),
+                            initialValue: _guildName,
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a guild name';
@@ -125,72 +229,65 @@ class _UserPageState extends State<UserPage> {
                             },
                           ),
                           TextFormField(
-                            decoration:
-                                InputDecoration(labelText: 'Guild Position'),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a guild position';
-                              }
-                              return null;
-                            },
+                            decoration: InputDecoration(
+                                labelText: 'Guild Position (if applicable)'),
+                            initialValue: _guildPosition,
                             onSaved: (String? value) {
                               _guildPosition = value ?? '';
                             },
                           ),
-                          TextFormField(
+                          DropdownButtonFormField(
                             decoration: InputDecoration(labelText: 'Arena'),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter an arena';
-                              }
-                              return null;
-                            },
-                            onSaved: (String? value) {
-                              _arena = value ?? '';
-                            },
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(labelText: 'Selena'),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a Selena';
-                              }
-                              return null;
-                            },
-                            onSaved: (String? value) {
-                              _selena = value ?? '';
+                            value: _arena,
+                            items: _arenaFields.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              setState(() {
+                                _arena = value ?? '';
+                              });
                             },
                           ),
-                          SizedBox(
-                            height: 16.0,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  _resetForm();
-                                },
-                                child: Text('Reset'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  _formKey.currentState!.save();
-                                  _submitForm();
-                                },
-                                child: Text('Submit'),
-                              ),
-                            ],
+                          DropdownButtonFormField(
+                            decoration: InputDecoration(
+                                labelText: 'Real Arena'),
+                            value: _selena,
+                            items: _realArenaFields.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              setState(() {
+                                _selena = value ?? '';
+                              });
+                            },
                           ),
                         ],
                       ),
                     ),
                   ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('CANCEL'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      child: Text(_isUpdate ? 'Update' : 'Submit'),
+                    ),
+                  ],
                 );
               },
             );
           },
-          child: Text('Open Form'),
+          child: Text(_isUpdate ? 'Update Form' : 'Enter Information'),
         ),
       ),
     );
