@@ -1,9 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../main.dart';
+import '../secrets/email.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({Key? key, required this.title}) : super(key: key);
@@ -16,14 +18,21 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   String _nickname = '';
   String _rank = '';
-  String _server = '';
+  String _server = '한국';
   String _guildName = '';
-  String _guildPosition = '';
+  String _guildPosition = '단원';
   String _arena = 'hidden';
   String _selena = 'hidden';
   List<String> _arenaFields = [];
   List<String> _realArenaFields = [];
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final List<String> _guildPositionFields = ['단장', '부단장', '단원'];
+  final List<String> _serverFields = ['한국', '아시아', '글로벌', '유럽', '일본'];
+
+  final _mailFormKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _serverController = TextEditingController();
+  final _guildNameController = TextEditingController();
+  final _commentController = TextEditingController();
 
   bool _isUpdate = false;
   late String _docId;
@@ -45,7 +54,9 @@ class _UserPageState extends State<UserPage> {
         .doc(user!.uid)
         .get();
 
-    if (userData.exists && userData['nickname'] != null && userData['server'] != null) {
+    if (userData.exists &&
+        userData['nickname'] != null &&
+        userData['server'] != null) {
       setState(() {
         _isUpdate = true;
         _docId = userData.id;
@@ -71,7 +82,8 @@ class _UserPageState extends State<UserPage> {
         .get();
     final arenaData = arenaDocs.data() as Map<String, dynamic>;
     List<String> tiers = arenaData.keys.toList();
-    tiers.sort((a, b) => arenaData[a]['min_pt'].compareTo(arenaData[b]['min_pt']));
+    tiers.sort(
+        (a, b) => arenaData[a]['min_pt'].compareTo(arenaData[b]['min_pt']));
 
     setState(() {
       _arenaFields = tiers;
@@ -85,7 +97,8 @@ class _UserPageState extends State<UserPage> {
         .get();
     final realArenaData = realArenaDocs.data() as Map<String, dynamic>;
     List<String> tiers = realArenaData.keys.toList();
-    tiers.sort((a, b) => realArenaData[a]['min_pt'].compareTo(realArenaData[b]['min_pt']));
+    tiers.sort((a, b) =>
+        realArenaData[a]['min_pt'].compareTo(realArenaData[b]['min_pt']));
 
     setState(() {
       _realArenaFields = tiers;
@@ -98,12 +111,9 @@ class _UserPageState extends State<UserPage> {
 
       // Firebase에 값을 저장
       final user = FirebaseAuth.instance.currentUser;
-      final scaffoldContext = scaffoldKey.currentContext; // 변경된 부분
+      final scaffoldContext = _formKey.currentContext; // 변경된 부분
       if (_isUpdate) {
-        await FirebaseFirestore.instance
-            .collection('user')
-            .doc(_docId)
-            .update({
+        await FirebaseFirestore.instance.collection('user').doc(_docId).update({
           'nickname': _nickname,
           'rank': _rank,
           'server': _server,
@@ -113,8 +123,8 @@ class _UserPageState extends State<UserPage> {
           'selena': _selena,
         });
         if (scaffoldContext != null) {
-          ScaffoldMessenger.of(scaffoldContext!).showSnackBar(
-            SnackBar(
+          ScaffoldMessenger.of(scaffoldContext)?.showSnackBar(
+            const SnackBar(
               content: Text('성공적으로 업데이트 되었습니다.'),
             ),
           );
@@ -130,8 +140,8 @@ class _UserPageState extends State<UserPage> {
           'selena': _selena,
         });
         if (scaffoldContext != null) {
-          ScaffoldMessenger.of(scaffoldContext!).showSnackBar(
-            SnackBar(
+          ScaffoldMessenger.of(scaffoldContext)?.showSnackBar(
+            const SnackBar(
               content: Text('성공적으로 생성 되었습니다.'),
             ),
           );
@@ -143,153 +153,259 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  void _resetForm() {
-    setState(() {
-      _nickname = '';
-      _rank = '';
-      _server = '';
-      _guildName = '';
-      _guildPosition = '';
-      _arena = '';
-      _selena = '';
-    });
+  Future<void> _submitMailForm() async {
+    if (_mailFormKey.currentState!.validate()) {
+      // Email the form data
+      final name = _nameController.text;
+      final server = _serverController.text;
+      final guildName = _guildNameController.text;
+      final comment = _commentController.text;
+
+      final smtpServer = gmail('no.reply.ezcominc@gmail.com', GMAIL_PASSWORD_NEW);
+      log('PWDPWDPWDPWD:$GMAIL_PASSWORD_NEW');
+      final message = Message()
+        ..from = Address('no.reply.ezcominc@gmail.com')
+        ..recipients.add('no.reply.ezcominc@gmail.com')
+        ..subject = 'Flutter Form Submission'
+        ..text = 'Name: $name\nServer: $server\nGuild Name: $guildName\nComment: $comment';
+
+      try {
+        final sendReport = await send(message, smtpServer);
+        print('Message sent: ${sendReport.toString()}');
+      } on MailerException catch (e) {
+        print('Message not sent: ${e.toString()}');
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isUpdate ? 'Update Form' : 'User Information'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text(_isUpdate ? 'Update Form' : 'User Information'),
-                  content: SingleChildScrollView(
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextFormField(
-                            decoration: InputDecoration(labelText: 'Nickname'),
-                            initialValue: _nickname,
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a nickname';
-                              }
-                              return null;
-                            },
-                            onSaved: (String? value) {
-                              _nickname = value ?? '';
-                            },
+        appBar: AppBar(
+          title: Text(_isUpdate ? 'Update Form' : 'User Information'),
+        ),
+        body: ListView(padding: const EdgeInsets.all(16.0), children: <Widget>[
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title:
+                          Text(_isUpdate ? 'Update Form' : 'User Information'),
+                      content: SingleChildScrollView(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                    labelText: 'Nickname'),
+                                initialValue: _nickname,
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a nickname';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (String? value) {
+                                  _nickname = value ?? '';
+                                },
+                              ),
+                              TextFormField(
+                                decoration:
+                                    const InputDecoration(labelText: 'Rank'),
+                                initialValue: _rank,
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a rank';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (String? value) {
+                                  _rank = value ?? '';
+                                },
+                              ),
+                              DropdownButtonFormField(
+                                decoration:
+                                    const InputDecoration(labelText: 'Server'),
+                                value: _server,
+                                items: _serverFields.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    _server = value ?? '';
+                                  });
+                                },
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                    labelText: 'Guild Name'),
+                                initialValue: _guildName,
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a guild name';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (String? value) {
+                                  _guildName = value ?? '';
+                                },
+                              ),
+                              DropdownButtonFormField(
+                                decoration: const InputDecoration(
+                                    labelText: 'Guild Position'),
+                                value: _guildPosition,
+                                items: _guildPositionFields.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    _guildPosition = value ?? '';
+                                  });
+                                },
+                              ),
+                              DropdownButtonFormField(
+                                decoration:
+                                    const InputDecoration(labelText: 'Arena'),
+                                value: _arena,
+                                items: _arenaFields.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    _arena = value ?? '';
+                                  });
+                                },
+                              ),
+                              DropdownButtonFormField(
+                                decoration: const InputDecoration(
+                                    labelText: 'Real Arena'),
+                                value: _selena,
+                                items: _realArenaFields.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    _selena = value ?? '';
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                          TextFormField(
-                            decoration: InputDecoration(labelText: 'Rank'),
-                            initialValue: _rank,
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a rank';
-                              }
-                              return null;
-                            },
-                            onSaved: (String? value) {
-                              _rank = value ?? '';
-                            },
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(labelText: 'Server'),
-                            initialValue: _server,
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a server';
-                              }
-                              return null;
-                            },
-                            onSaved: (String? value) {
-                              _server = value ?? '';
-                            },
-                          ),
-                          TextFormField(
-                            decoration:
-                            InputDecoration(labelText: 'Guild Name'),
-                            initialValue: _guildName,
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a guild name';
-                              }
-                              return null;
-                            },
-                            onSaved: (String? value) {
-                              _guildName = value ?? '';
-                            },
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                                labelText: 'Guild Position (if applicable)'),
-                            initialValue: _guildPosition,
-                            onSaved: (String? value) {
-                              _guildPosition = value ?? '';
-                            },
-                          ),
-                          DropdownButtonFormField(
-                            decoration: InputDecoration(labelText: 'Arena'),
-                            value: _arena,
-                            items: _arenaFields.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              setState(() {
-                                _arena = value ?? '';
-                              });
-                            },
-                          ),
-                          DropdownButtonFormField(
-                            decoration: InputDecoration(
-                                labelText: 'Real Arena'),
-                            value: _selena,
-                            items: _realArenaFields.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              setState(() {
-                                _selena = value ?? '';
-                              });
-                            },
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('CANCEL'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      child: Text(_isUpdate ? 'Update' : 'Submit'),
-                    ),
-                  ],
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('CANCEL'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _submitForm,
+                          child: Text(_isUpdate ? 'Update' : 'Submit'),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
-            );
-          },
-          child: Text(_isUpdate ? 'Update Form' : 'Enter Information'),
-        ),
-      ),
-    );
+              child: Text(_isUpdate ? 'Update Form' : 'Enter Information'),
+            ),
+          ),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('User Information'),
+                      content: SingleChildScrollView(
+                        child: Form(
+                          key: _mailFormKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextFormField(
+                                controller: _nameController,
+                                decoration: const InputDecoration(labelText: 'Name'),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: _serverController,
+                                decoration: const InputDecoration(labelText: 'Server'),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a server';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: _guildNameController,
+                                decoration: const InputDecoration(labelText: 'Guild Name'),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a guild name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: _commentController,
+                                decoration: const InputDecoration(labelText: 'Comment'),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a comment';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('CANCEL'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _submitMailForm,
+                          child: const Text('SUBMIT'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: const Text('Enter Information'),
+            ),
+          ),
+        ]));
   }
 }
