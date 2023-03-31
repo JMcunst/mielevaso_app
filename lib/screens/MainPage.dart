@@ -52,7 +52,7 @@ class _MainPageState extends State<MainPage> {
       if(FirebaseAuth.instance.currentUser == null){
         Get.off(() => const LoginPage());
       } else {
-        Get.off(() => const GuildPage());
+        Get.off(() => const GuildPage(title:'my-guild'));
       }
     });
   }

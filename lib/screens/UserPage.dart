@@ -5,6 +5,7 @@ import 'package:mailer/smtp_server.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../apis/google_auth_api.dart';
 import '../secrets/email.dart';
 
 class UserPage extends StatefulWidget {
@@ -156,17 +157,25 @@ class _UserPageState extends State<UserPage> {
   Future<void> _submitMailForm() async {
     if (_mailFormKey.currentState!.validate()) {
       // Email the form data
+      final user = await GoogleAuthApi.signIn();
+      if (user==null) return;
+      final email = user.email;
+      final auth = await user.authentication;
+      final token = auth.accessToken!;
+
       final name = _nameController.text;
       final server = _serverController.text;
       final guildName = _guildNameController.text;
       final comment = _commentController.text;
 
-      final smtpServer = gmail('no.reply.ezcominc@gmail.com', GMAIL_PASSWORD_NEW);
+      // final smtpServer = gmail('no.reply.ezcominc@gmail.com', GMAIL_PASSWORD_NEW);
+      // final smtpServer = gmailRelaySaslXoauth2('no.reply.ezcominc@gmail.com', token);
+      final smtpServer = gmailSaslXoauth2('no.reply.ezcominc@gmail.com', token);
       log('PWDPWDPWDPWD:$GMAIL_PASSWORD_NEW');
       final message = Message()
-        ..from = Address('no.reply.ezcominc@gmail.com')
-        ..recipients.add('no.reply.ezcominc@gmail.com')
-        ..subject = 'Flutter Form Submission'
+        ..from = Address('no.reply.ezcominc@gmail.com', 'Jmcunst')
+        ..recipients.add('xnslqjtmghaf@gmail.com')
+        ..subject = 'Please Enroll my Guild'
         ..text = 'Name: $name\nServer: $server\nGuild Name: $guildName\nComment: $comment';
 
       try {
