@@ -26,6 +26,7 @@ class _UserPageState extends State<UserPage> {
   String _selena = 'hidden';
   List<String> _arenaFields = [];
   List<String> _realArenaFields = [];
+  List<String> _guildNameFields = [];
   final List<String> _guildPositionFields = ['단장', '부단장', '단원'];
   final List<String> _serverFields = ['한국', '아시아', '글로벌', '유럽', '일본'];
 
@@ -45,6 +46,7 @@ class _UserPageState extends State<UserPage> {
     super.initState();
     _getArenas();
     _getRealArenas();
+    _getGuildName();
     _checkUser();
   }
 
@@ -103,6 +105,19 @@ class _UserPageState extends State<UserPage> {
 
     setState(() {
       _realArenaFields = tiers;
+    });
+  }
+
+  void _getGuildName() async {
+    final guildNameDocs = await FirebaseFirestore.instance
+        .collection('guild')
+        .get();
+
+    List<String> guildNames = guildNameDocs.docs.map((doc) => doc.id).toList();
+    guildNames.sort();
+
+    setState(() {
+      _realArenaFields = guildNames;
     });
   }
 
@@ -253,18 +268,20 @@ class _UserPageState extends State<UserPage> {
                                   });
                                 },
                               ),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                    labelText: 'Guild Name'),
-                                initialValue: _guildName,
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a guild name';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (String? value) {
-                                  _guildName = value ?? '';
+                              DropdownButtonFormField(
+                                decoration:
+                                const InputDecoration(labelText: 'Guild Name'),
+                                value: _guildName,
+                                items: _guildNameFields.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    _guildName = value ?? '';
+                                  });
                                 },
                               ),
                               DropdownButtonFormField(

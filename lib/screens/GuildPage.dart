@@ -200,7 +200,6 @@ class _GuildPageState extends State<GuildPage> {
               ],
             ),
           )
-
         ],
       ),
     );
