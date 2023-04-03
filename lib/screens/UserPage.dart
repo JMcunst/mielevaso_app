@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -115,9 +116,12 @@ class _UserPageState extends State<UserPage> {
 
     List<String> guildNames = guildNameDocs.docs.map((doc) => doc.id).toList();
     guildNames.sort();
+    guildNames.insert(0, '없음');
+    // var firstGuildName = guildNames[0].runtimeType;
+    log('EEEEE:$guildNames');
 
     setState(() {
-      _realArenaFields = guildNames;
+      _guildNameFields = guildNames;
     });
   }
 
@@ -139,7 +143,7 @@ class _UserPageState extends State<UserPage> {
           'selena': _selena,
         });
         if (scaffoldContext != null) {
-          ScaffoldMessenger.of(scaffoldContext)?.showSnackBar(
+          ScaffoldMessenger.of(scaffoldContext).showSnackBar(
             const SnackBar(
               content: Text('성공적으로 업데이트 되었습니다.'),
             ),
@@ -156,7 +160,7 @@ class _UserPageState extends State<UserPage> {
           'selena': _selena,
         });
         if (scaffoldContext != null) {
-          ScaffoldMessenger.of(scaffoldContext)?.showSnackBar(
+          ScaffoldMessenger.of(scaffoldContext).showSnackBar(
             const SnackBar(
               content: Text('성공적으로 생성 되었습니다.'),
             ),
@@ -186,7 +190,7 @@ class _UserPageState extends State<UserPage> {
       // final smtpServer = gmail('no.reply.ezcominc@gmail.com', GMAIL_PASSWORD_NEW);
       // final smtpServer = gmailRelaySaslXoauth2('no.reply.ezcominc@gmail.com', token);
       final smtpServer = gmailSaslXoauth2('no.reply.ezcominc@gmail.com', token);
-      log('PWDPWDPWDPWD:$GMAIL_PASSWORD_NEW');
+      // log('PWDPWDPWDPWD:$GMAIL_PASSWORD_NEW');
       final message = Message()
         ..from = Address('no.reply.ezcominc@gmail.com', 'Jmcunst')
         ..recipients.add('xnslqjtmghaf@gmail.com')
@@ -200,6 +204,20 @@ class _UserPageState extends State<UserPage> {
         print('Message not sent: ${e.toString()}');
       }
     }
+  }
+
+  bool isItemDisabled(String s) {
+    //return s.startsWith('I');
+
+    if (s.startsWith('I')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void itemSelectionChanged(String? s) {
+    print(s);
   }
 
   @override
@@ -268,21 +286,21 @@ class _UserPageState extends State<UserPage> {
                                   });
                                 },
                               ),
-                              DropdownButtonFormField(
-                                decoration:
-                                const InputDecoration(labelText: 'Guild Name'),
-                                value: _guildName,
-                                items: _guildNameFields.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    _guildName = value ?? '';
-                                  });
-                                },
+                              DropdownSearch<String>(
+                                mode: Mode.MENU,
+                                showSelectedItems: true,
+                                items: _guildNameFields,
+                                dropdownSearchDecoration: const InputDecoration(
+                                  labelText: "Select Guild Name",
+                                  hintText: "search your guild name",
+                                ),
+                                popupItemDisabled: isItemDisabled,
+                                onChanged: itemSelectionChanged,
+                                //selectedItem: "",
+                                showSearchBox: true,
+                                searchFieldProps: const TextFieldProps(
+                                  cursorColor: Colors.blue,
+                                ),
                               ),
                               DropdownButtonFormField(
                                 decoration: const InputDecoration(
