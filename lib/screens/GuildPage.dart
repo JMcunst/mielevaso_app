@@ -41,7 +41,20 @@ class _GuildPageState extends State<GuildPage> {
     });
   }
 
+  void addMember() {
+    FirebaseFirestore.instance
+        .collection('guild')
+        .doc('미엘레바소')
+        .update({
+      'members.사람3': {
+        'nickname': '사람3',
+        'rank': '70'
+      }
+    });
+  }
+
   Future<void> _enterRequester() async {
+    addMember();
     // TODO: 체크된 requester 처리 로직 추가
   }
 
