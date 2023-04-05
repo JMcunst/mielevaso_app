@@ -41,20 +41,21 @@ class _GuildPageState extends State<GuildPage> {
     });
   }
 
-  void addMember() {
+  void addMember(String requesterKey) {
     FirebaseFirestore.instance
         .collection('guild')
         .doc('미엘레바소')
         .update({
-      'members.사람3': {
-        'nickname': '사람3',
+      'members.$requesterKey': {
+        'nickname': requesterKey,
         'rank': '70'
       }
     });
   }
 
-  Future<void> _enterRequester() async {
-    addMember();
+  Future<void> _enterRequester(String requesterKey) async {
+    addMember(requesterKey);
+    await _cancelRequester(requesterKey);
     // TODO: 체크된 requester 처리 로직 추가
   }
 
@@ -84,13 +85,12 @@ class _GuildPageState extends State<GuildPage> {
     );
 
     if (isConfirmed == true) {
-      await _enterRequester();
+      await _enterRequester(requesterKey);
     }
   }
 
   Future<void> _cancelRequester(String requesterKey) async {
-    final CollectionReference requesterCollection =
-    FirebaseFirestore.instance.collection('requester');
+    final CollectionReference requesterCollection = FirebaseFirestore.instance.collection('requester');
 
     await requesterCollection.doc('미엘레바소').update({
       requesterKey: FieldValue.delete(),
