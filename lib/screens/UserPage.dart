@@ -290,13 +290,17 @@ class _UserPageState extends State<UserPage> {
                                 mode: Mode.MENU,
                                 showSelectedItems: true,
                                 items: _guildNameFields,
+                                selectedItem: _guildName, // 초기에 선택될 값
                                 dropdownSearchDecoration: const InputDecoration(
                                   labelText: "Select Guild Name",
                                   hintText: "search your guild name",
+                                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.grey, size: 24),
                                 ),
-                                popupItemDisabled: isItemDisabled,
-                                onChanged: itemSelectionChanged,
-                                //selectedItem: "",
+                                onChanged: (value) {
+                                  setState(() {
+                                    _guildName = value!;
+                                  });
+                                },
                                 showSearchBox: true,
                                 searchFieldProps: const TextFieldProps(
                                   cursorColor: Colors.blue,
