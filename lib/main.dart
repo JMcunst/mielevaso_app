@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp>{
     return GetMaterialApp(
       title: '로그인 앱',
       theme: appTheme,
-      home: MainPage()
+      home: const MainPage()
     );
   }
 
