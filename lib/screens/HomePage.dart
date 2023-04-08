@@ -1,13 +1,10 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mielevaso_app/screens/EquipmentPage.dart';
 import 'package:mielevaso_app/screens/GuildNotFoundPage.dart';
 import 'package:mielevaso_app/screens/GuildPage.dart';
 import 'package:mielevaso_app/screens/UserPage.dart';
-import 'LoginPage.dart';
 
 class HomePage extends StatefulWidget {
   final int initialPageIndex;
@@ -22,13 +19,13 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _children = [
     const GuildPage(title: 'my-guild'),
+    const EquipmentPage(),
     const UserPage(title: 'UserPage'),
   ];
 
   @override
   void initState() {
     super.initState();
-    print('wwwwwwwww!!w!');
     _currentIndex = widget.initialPageIndex;
   }
 
@@ -40,8 +37,7 @@ class _HomePageState extends State<HomePage> {
         Widget body;
         if (snapshot.hasData) {
           final guildName = snapshot.data;
-          print('GGGGGG:$guildName');
-          if(_currentIndex == 1){
+          if(_currentIndex >= 1){
             body = _children[_currentIndex];
           }else if(guildName == '없음'){
             body = const GuildNotFoundPage();
@@ -67,6 +63,10 @@ class _HomePageState extends State<HomePage> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.group),
                 label: 'Guild',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.grading),
+                label: 'Equipment',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),

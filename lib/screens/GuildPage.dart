@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -38,7 +36,6 @@ class _GuildPageState extends State<GuildPage> {
             .collection('requester')
             .doc('미엘레바소')
             .get();
-    log('T11111');
 
     setState(() {
       requesterKeys = List<String>.from(snapshot.data()!.keys);
@@ -60,7 +57,6 @@ class _GuildPageState extends State<GuildPage> {
 
   Future<void> _showConfirmDialog(
       BuildContext context, String requesterKey) async {
-    log('SSSS:$context');
     final isConfirmed = await showDialog(
       context: context,
       builder: (BuildContext context) {
