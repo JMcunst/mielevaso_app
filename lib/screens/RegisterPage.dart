@@ -57,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextFormField(
       controller: _passwordController,
       obscureText: true,
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.text,
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
         labelText: '비밀번호',
