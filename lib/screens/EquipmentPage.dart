@@ -110,8 +110,6 @@ class _EquipmentPageState extends State<EquipmentPage>
         .collection('equipments')
         .doc(user.uid)
         .get();
-    final testData = [equipmentsSnapshot.data()];
-    print('TTTTT:$testData');
     if (equipmentsSnapshot.exists) {
       setState(() {
         swordList = List<Map<String, dynamic>>.from(
@@ -342,36 +340,36 @@ class _EquipmentPageState extends State<EquipmentPage>
                             });
                           },
                         ),
-                        // DropdownButtonFormField(
-                        //   decoration: const InputDecoration(labelText: 'Set'),
-                        //   value: _setType,
-                        //   items: _setTypeFormField.map((item) {
-                        //     return DropdownMenuItem(
-                        //       value: item['code'],
-                        //       child: Text(item['title']!),
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (String? value) {
-                        //     setState(() {
-                        //       _setType = value ?? 'ATK';
-                        //     });
-                        //   },
-                        // ),
-                        // DropdownButtonFormField(
-                        //   decoration: const InputDecoration(labelText: '메인옵'),
-                        //   value: _mainStatValue,
-                        //   items: _statTypeFormField.map((item) {
-                        //     return DropdownMenuItem(
-                        //       value: item['code'],
-                        //       child: Text(item['title']!),
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (String? value) {
-                        //     setState(() {
-                        //       _mainStatValue = value ?? 'HPP';
-                        //     });
-                        //   },
-                        // ),
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(labelText: 'Set'),
+                          value: _setType,
+                          items: _setTypeFormField.map((item) {
+                            return DropdownMenuItem(
+                              value: item['code'],
+                              child: Text(item['title']!),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _setType = value ?? 'ATK';
+                            });
+                          },
+                        ),
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(labelText: '메인옵'),
+                          value: _mainStatValue,
+                          items: _statTypeFormField.map((item) {
+                            return DropdownMenuItem(
+                              value: item['code'],
+                              child: Text(item['title']!),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _mainStatValue = value ?? 'HPP';
+                            });
+                          },
+                        ),
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: '메인옵 포인트'),
@@ -388,21 +386,21 @@ class _EquipmentPageState extends State<EquipmentPage>
                             }
                           },
                         ),
-                        // DropdownButtonFormField(
-                        //   decoration: const InputDecoration(labelText: '부옵1'),
-                        //   value: _subStatValueOne,
-                        //   items: _statTypeFormField.map((item) {
-                        //     return DropdownMenuItem(
-                        //       value: item['code'],
-                        //       child: Text(item['title']!),
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (String? value) {
-                        //     setState(() {
-                        //       _subStatValueOne = value ?? 'HPP';
-                        //     });
-                        //   },
-                        // ),
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(labelText: '부옵1'),
+                          value: _subStatValueOne,
+                          items: _statTypeFormField.map((item) {
+                            return DropdownMenuItem(
+                              value: item['code'],
+                              child: Text(item['title']!),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _subStatValueOne = value ?? 'HPP';
+                            });
+                          },
+                        ),
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: '부옵1 포인트'),
@@ -419,21 +417,21 @@ class _EquipmentPageState extends State<EquipmentPage>
                             }
                           },
                         ),
-                        // DropdownButtonFormField(
-                        //   decoration: const InputDecoration(labelText: '부옵2'),
-                        //   value: _subStatValueTwo,
-                        //   items: _statTypeFormField.map((item) {
-                        //     return DropdownMenuItem(
-                        //       value: item['code'],
-                        //       child: Text(item['title']!),
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (String? value) {
-                        //     setState(() {
-                        //       _subStatValueTwo = value ?? 'HPP';
-                        //     });
-                        //   },
-                        // ),
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(labelText: '부옵2'),
+                          value: _subStatValueTwo,
+                          items: _statTypeFormField.map((item) {
+                            return DropdownMenuItem(
+                              value: item['code'],
+                              child: Text(item['title']!),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _subStatValueTwo = value ?? 'HPP';
+                            });
+                          },
+                        ),
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: '부옵2 포인트'),
@@ -450,21 +448,21 @@ class _EquipmentPageState extends State<EquipmentPage>
                             }
                           },
                         ),
-                        // DropdownButtonFormField(
-                        //   decoration: const InputDecoration(labelText: '부옵3'),
-                        //   value: _subStatValueThree,
-                        //   items: _statTypeFormField.map((item) {
-                        //     return DropdownMenuItem(
-                        //       value: item['code'],
-                        //       child: Text(item['title']!),
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (String? value) {
-                        //     setState(() {
-                        //       _subStatValueThree = value ?? 'HPP';
-                        //     });
-                        //   },
-                        // ),
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(labelText: '부옵3'),
+                          value: _subStatValueThree,
+                          items: _statTypeFormField.map((item) {
+                            return DropdownMenuItem(
+                              value: item['code'],
+                              child: Text(item['title']!),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _subStatValueThree = value ?? 'HPP';
+                            });
+                          },
+                        ),
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: '부옵3 포인트'),
@@ -481,21 +479,21 @@ class _EquipmentPageState extends State<EquipmentPage>
                             }
                           },
                         ),
-                        // DropdownButtonFormField(
-                        //   decoration: const InputDecoration(labelText: '부옵4'),
-                        //   value: _subStatValueFour,
-                        //   items: _statTypeFormField.map((item) {
-                        //     return DropdownMenuItem(
-                        //       value: item['code'],
-                        //       child: Text(item['title']!),
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (String? value) {
-                        //     setState(() {
-                        //       _subStatValueFour = value ?? 'HPP';
-                        //     });
-                        //   },
-                        // ),
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(labelText: '부옵4'),
+                          value: _subStatValueFour,
+                          items: _statTypeFormField.map((item) {
+                            return DropdownMenuItem(
+                              value: item['code'],
+                              child: Text(item['title']!),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _subStatValueFour = value ?? 'HPP';
+                            });
+                          },
+                        ),
                         TextFormField(
                           decoration:
                               const InputDecoration(labelText: '부옵4 포인트'),
