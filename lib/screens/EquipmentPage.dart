@@ -192,37 +192,6 @@ class _EquipmentPageState extends State<EquipmentPage>
     return [];
   }
 
-  Future<void> _loadEquipments() async {
-    final equipmentsSnapshot = await FirebaseFirestore.instance
-        .collection('equipments')
-        .doc(user.uid)
-        .get();
-    if (equipmentsSnapshot.exists) {
-      setState(() {
-        swordList = List<Map<String, dynamic>>.from(
-            equipmentsSnapshot.data()!['sword'] ?? []);
-        helmetList = List<Map<String, dynamic>>.from(
-            equipmentsSnapshot.data()!['helmet'] ?? []);
-        armorList = List<Map<String, dynamic>>.from(
-            equipmentsSnapshot.data()!['armor'] ?? []);
-        necklaceList = List<Map<String, dynamic>>.from(
-            equipmentsSnapshot.data()!['necklace'] ?? []);
-        ringList = List<Map<String, dynamic>>.from(
-            equipmentsSnapshot.data()!['ring'] ?? []);
-        shoesList = List<Map<String, dynamic>>.from(
-            equipmentsSnapshot.data()!['shoes'] ?? []);
-        allList = [
-          ...swordList,
-          ...helmetList,
-          ...armorList,
-          ...necklaceList,
-          ...ringList,
-          ...shoesList,
-        ];
-      });
-    }
-  }
-
   void _onTabSelected() {
     switch (_tabController.index) {
       case 0:
