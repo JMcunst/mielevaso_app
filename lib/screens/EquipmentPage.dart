@@ -88,6 +88,7 @@ class _EquipmentPageState extends State<EquipmentPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 7, vsync: this);
+    _tabController.addListener(_onTabSelected);
     user = FirebaseAuth.instance.currentUser!;
     allList = [];
     swordList = [];
@@ -96,13 +97,99 @@ class _EquipmentPageState extends State<EquipmentPage>
     necklaceList = [];
     ringList = [];
     shoesList = [];
-    _loadEquipments();
+    _loadAll();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+  Future<void> _loadAll() async {
+    await _loadSwords();
+    await _loadArmors();
+    await _loadHelmets();
+    await _loadNecklaces();
+    await _loadRings();
+    await _loadShoes();
+    setState(() {
+      allList = [
+        ...swordList,
+        ...armorList,
+        ...helmetList,
+        ...necklaceList,
+        ...ringList,
+        ...shoesList,
+      ];
+    });
+  }
+  Future<List<Map<String, dynamic>>> _loadSwords() async {
+    final swordsSnapshot = await FirebaseFirestore.instance
+        .collection('equipments')
+        .doc(user.uid)
+        .collection('swords')
+        .doc('sword')
+        .get();
+    if (swordsSnapshot.exists) {
+      return List<Map<String, dynamic>>.from(swordsSnapshot.data()!['swords'] ?? []);
+    }
+    return [];
+  }
+  Future<List<Map<String, dynamic>>> _loadArmors() async {
+    final armorsSnapshot = await FirebaseFirestore.instance
+        .collection('equipments')
+        .doc(user.uid)
+        .collection('armors')
+        .doc('armor')
+        .get();
+    if (armorsSnapshot.exists) {
+      return List<Map<String, dynamic>>.from(armorsSnapshot.data()!['armors'] ?? []);
+    }
+    return [];}
+  Future<List<Map<String, dynamic>>> _loadHelmets() async {
+    final helmetsSnapshot = await FirebaseFirestore.instance
+        .collection('equipments')
+        .doc(user.uid)
+        .collection('helmets')
+        .doc('helmet')
+        .get();
+    if (helmetsSnapshot.exists) {
+      return List<Map<String, dynamic>>.from(helmetsSnapshot.data()!['helmets'] ?? []);
+    }
+    return [];}
+  Future<List<Map<String, dynamic>>> _loadNecklaces() async {
+    final necklacesSnapshot = await FirebaseFirestore.instance
+        .collection('equipments')
+        .doc(user.uid)
+        .collection('necklaces')
+        .doc('necklace')
+        .get();
+    if (necklacesSnapshot.exists) {
+      return List<Map<String, dynamic>>.from(necklacesSnapshot.data()!['necklaces'] ?? []);
+    }
+    return [];}
+  Future<List<Map<String, dynamic>>> _loadRings() async {
+    final ringsSnapshot = await FirebaseFirestore.instance
+        .collection('equipments')
+        .doc(user.uid)
+        .collection('rings')
+        .doc('ring')
+        .get();
+    if (ringsSnapshot.exists) {
+      return List<Map<String, dynamic>>.from(ringsSnapshot.data()!['rings'] ?? []);
+    }
+    return [];}
+  Future<List<Map<String, dynamic>>> _loadShoes() async {
+    final shoesSnapshot = await FirebaseFirestore.instance
+        .collection('equipments')
+        .doc(user.uid)
+        .collection('shoes')
+        .doc('shoe')
+        .get();
+    if (shoesSnapshot.exists) {
+      return List<Map<String, dynamic>>.from(shoesSnapshot.data()!['shoes'] ?? []);
+    }
+    return [];
   }
 
   Future<void> _loadEquipments() async {
@@ -133,6 +220,56 @@ class _EquipmentPageState extends State<EquipmentPage>
           ...shoesList,
         ];
       });
+    }
+  }
+
+  void _onTabSelected() {
+    switch (_tabController.index) {
+      case 0:
+        _loadAll();
+        break;
+      case 1:
+        _loadSwords().then((swords) {
+          setState(() {
+            swordList = swords;
+          });
+        });
+        break;
+      case 2:
+        _loadHelmets().then((helmets) {
+          setState(() {
+            helmetList = helmets;
+          });
+        });
+        break;
+      case 3:
+        _loadArmors().then((armors) {
+          setState(() {
+            armorList = armors;
+          });
+        });
+        break;
+      case 4:
+        _loadNecklaces().then((necklaces) {
+          setState(() {
+            necklaceList = necklaces;
+          });
+        });
+        break;
+      case 5:
+        _loadRings().then((rings) {
+          setState(() {
+            ringList = rings;
+          });
+        });
+        break;
+      case 6:
+        _loadShoes().then((shoes) {
+          setState(() {
+            shoesList = shoes;
+          });
+        });
+        break;
     }
   }
 
@@ -202,6 +339,7 @@ class _EquipmentPageState extends State<EquipmentPage>
                 AssetImage("assets/icons/sword.png"),
                 size: 24,
               ),
+
             ),
             Tab(
               icon: ImageIcon(
