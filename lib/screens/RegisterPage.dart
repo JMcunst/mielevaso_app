@@ -161,6 +161,14 @@ class _RegisterPageState extends State<RegisterPage> {
             password: _passwordController.text
         )).user;
 
+        CollectionReference equipmentsCollection = FirebaseFirestore.instance.collection('equipments');
+        equipmentsCollection.doc(user!.uid).collection('swords').doc('sword').set({});
+        equipmentsCollection.doc(user.uid).collection('helmets').doc('helmet').set({});
+        equipmentsCollection.doc(user.uid).collection('armors').doc('armor').set({});
+        equipmentsCollection.doc(user.uid).collection('necklaces').doc('necklace').set({});
+        equipmentsCollection.doc(user.uid).collection('rings').doc('ring').set({});
+        equipmentsCollection.doc(user.uid).collection('shoes').doc('shoe').set({});
+
         CollectionReference userCollection = FirebaseFirestore.instance.collection('user');
         userCollection.doc(user!.uid).set({
           'name': _nameController.text,
