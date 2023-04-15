@@ -21,6 +21,8 @@ class _EquipmentPageState extends State<EquipmentPage>
   late List<Map<String, dynamic>> ringList;
   late List<Map<String, dynamic>> shoesList;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final List<String> _categoryFormField = [
     'sword',
     'helmet',
@@ -190,6 +192,64 @@ class _EquipmentPageState extends State<EquipmentPage>
       return List<Map<String, dynamic>>.from(shoesSnapshot.data()!['shoes'] ?? []);
     }
     return [];
+  }
+
+
+
+  double calEquipmentScore(){
+    double score = 0.0;
+
+    // TODO: GET SCORE LOGIC
+    return score;
+  }
+
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      // Firebase에 값을 저장
+      final user = FirebaseAuth.instance.currentUser;
+      final scaffoldContext = _formKey.currentContext; // 변경된 부분
+
+      double score_equipment = calEquipmentScore();
+      final setData = {
+        "name": _name,
+        "level":_level,
+        "category": _categoryValue,
+        "converted": _convertedFormValue,
+        "grade": _gradeValue,
+        "reinforced": _reinforced,
+        "set": _setType,
+        "is_blacksmith": _isBalcksmithValue,
+        "main_st_ty": _mainStatValue,
+        "main_st_pt": _mainStatPoint,
+        "sub_st1_ty": _subStatValueOne,
+        "sub_st1_pt": _subStatPointOne,
+        "sub_st2_ty": _subStatValueTwo,
+        "sub_st2_pt": _subStatPointTwo,
+        "sub_st3_ty": _subStatValueThree,
+        "sub_st3_pt": _subStatPointThree,
+        "sub_st4_ty": _subStatValueFour,
+        "sub_st4_pt": _subStatPointFour,
+        "score": score_equipment,
+        "status":true,
+        "created_at":FieldValue.serverTimestamp(),
+        "update_at":FieldValue.serverTimestamp(),
+      };
+
+      await FirebaseFirestore.instance.collection('equipment').doc(user!.uid).collection(_categoryValue+'s').doc(_categoryValue).set(setData);
+      if (scaffoldContext != null) {
+        ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+          const SnackBar(
+            content: Text('성공적으로 생성 되었습니다.'),
+          ),
+        );
+      }
+
+
+      // 다이얼로그 닫기
+      Navigator.of(scaffoldContext!).pop();
+    }
   }
 
   void _onTabSelected() {
@@ -643,12 +703,9 @@ class _EquipmentPageState extends State<EquipmentPage>
                       Navigator.of(context).pop();
                     },
                   ),
-                  TextButton(
-                    child: const Text('저장'),
-                    onPressed: () {
-                      // 사용자가 입력한 데이터 출력
-                      Navigator.of(context).pop();
-                    },
+                  ElevatedButton(
+                    onPressed: _submitForm,
+                    child: Text('저장'),
                   ),
                 ],
               );
