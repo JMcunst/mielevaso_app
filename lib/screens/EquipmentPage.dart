@@ -71,8 +71,6 @@ class _EquipmentPageState extends State<EquipmentPage>
         .doc('sword')
         .get();
     if (swordsSnapshot.exists) {
-      final ts = swordsSnapshot.data()!['datas'];
-      print('eeeeeee$ts');
       return List<Map<String, dynamic>>.from(
           swordsSnapshot.data()!['datas'] ?? []);
     }

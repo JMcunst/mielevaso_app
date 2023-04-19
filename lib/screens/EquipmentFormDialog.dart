@@ -13,6 +13,10 @@ class EquipmentFormDialog extends StatefulWidget {
 }
 
 class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+
   String _categoryNameValue = '어비스 드레이크 뼈날검';
   late List<String> _categoryNames;
 
@@ -120,7 +124,26 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
   double calEquipmentScore() {
     double score = 0.0;
 
-    // TODO: GET SCORE LOGIC
+    List<String> subStatValues = [_subStatValueOne, _subStatValueTwo, _subStatValueThree, _subStatValueFour,];
+    List<int> subStatScore = [_subStatPointOneScore, _subStatPointTwoScore, _subStatPointThreeScore, _subStatPointFourScore,];
+    List<int> subStatPoint = [_subStatPointOne, _subStatPointTwo, _subStatPointThree, _subStatPointFour,];
+
+    for (int i = 0; i < subStatValues.length; i++) {
+      String subStatValue = subStatValues[i];
+      if (subStatValue == 'HPP' || subStatValue == 'DFP' || subStatValue == 'ATP') {
+        score += subStatScore[i];
+      }else{
+        if(subStatValue == 'SPD'){
+          score += (subStatPoint[i] * 2);
+        }else if(subStatValue == 'CHC'){
+          score += (subStatPoint[i] * 1.5);
+        }else if(subStatValue == 'CHD'){
+          score += (subStatPoint[i] * 1.2);
+        }else{
+          score += subStatPoint[i] * 1.2;
+        }
+      }
+    }
     return score;
   }
 
@@ -140,9 +163,12 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
   }
 
   void _submitForm() async {
-    String img_url_path =
-        'equipments/${_categoryValue}s/$_categoryNameValue.png';
-    print('aaaaaaaaa:$img_url_path');
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    _formKey.currentState!.save();
+
+    String img_url_path = 'equipments/${_categoryValue}s/$_categoryNameValue.png';
     final storageRef = FirebaseStorage.instance.ref().child(img_url_path);
     final imageUrl = await storageRef.getDownloadURL();
 
@@ -175,7 +201,6 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
       "update_at": now,
       "img_url": imageUrl
     };
-    print('SSSSSSS$setData');
 
     await FirebaseFirestore.instance
         .collection('equipments')
@@ -210,6 +235,7 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
       title: const Text('장비 정보 추가'),
       content: SingleChildScrollView(
         child: Form(
+          key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[

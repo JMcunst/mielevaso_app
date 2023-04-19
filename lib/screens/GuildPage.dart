@@ -252,7 +252,7 @@ class _GuildPageState extends State<GuildPage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
-                    'Requesters',
+                    '가입 신청자',
                     style: Theme.of(context).textTheme.subtitle1?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
