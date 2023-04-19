@@ -17,11 +17,34 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
   late List<String> _categoryNames;
 
   List<DropdownMenuItem<String>>? _categoryNameItems;
-  final List<String> _categoryFormField = ['sword', 'helmet', 'armor', 'necklace', 'ring', 'shoes'];
+  final List<String> _categoryFormField = [
+    'sword',
+    'helmet',
+    'armor',
+    'necklace',
+    'ring',
+    'shoes'
+  ];
   String _categoryValue = 'sword';
   final Map<String, List<String>> _categoryNameLists = {
-    'sword': ['에이션트 드레이크 뼈날검', '검은 영혼의 양날 검','에이키르 제사장의 지팡이','어둠강철 검','저주받은 악마의 양날 검','지옥파멸 정수 오브', '어비스 드레이크 뼈날검'],
-    'helmet': ['Plate Helm', 'Leather Hood', 'Chain Coif'],
+    'sword': [
+      '에이션트 드레이크 뼈날검',
+      '검은 영혼의 양날 검',
+      '에이키르 제사장의 지팡이',
+      '어둠강철 검',
+      '저주받은 악마의 양날 검',
+      '지옥파멸 정수 오브',
+      '어비스 드레이크 뼈날검'
+    ],
+    'helmet': [
+      '에이션트 드레이크 페이스',
+      '검은 영혼의 뿔 투구',
+      '에이키르 제사장의 예관',
+      '에르시스퀘어',
+      '황혼의 정수 왕관',
+      '근원의 거미 여왕 투구',
+      '어비스 드레이크 페이스'
+    ],
     'armor': ['Chainmail', 'Platemail', 'Leather Armor'],
     'necklace': ['Amulet of Power', 'Necklace of Sorcery'],
     'ring': ['Ring of Protection', 'Ring of Regeneration'],
@@ -29,7 +52,16 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
   };
   final List<String> _convertedField = ['없음', '1번째', '2번째', '3번째', '4번째'];
   String _convertedFormValue = '없음';
-  final List<String> _levelField = ['90', '88', '85', '80', '78','75','71','70'];
+  final List<String> _levelField = [
+    '90',
+    '88',
+    '85',
+    '80',
+    '78',
+    '75',
+    '71',
+    '70'
+  ];
   String _levelValue = '85';
   final List<String> _gradeFormField = ['전설', '영웅', '희귀', '일반'];
   String _gradeValue = '전설';
@@ -58,7 +90,10 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
   String _subStatValueThree = 'HPS';
   int _subStatPointFour = 0;
   String _subStatValueFour = 'HPS';
-  String _name = '';
+  int _subStatPointOneScore = 0;
+  int _subStatPointTwoScore = 0;
+  int _subStatPointThreeScore = 0;
+  int _subStatPointFourScore = 0;
   final int _reinforced = 15;
   final List<Map<String, String>> _setTypeFormField = [
     {'code': 'ATK', 'title': '공격'},
@@ -94,17 +129,19 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
   }
 
   List<DropdownMenuItem<String>> _getCategoryNameItems() {
-    final categoryNameList = _categoryNameLists[_categoryValue] ?? _categoryNameLists['sword']!;
+    final categoryNameList =
+        _categoryNameLists[_categoryValue] ?? _categoryNameLists['sword']!;
     return categoryNameList
         .map((value) => DropdownMenuItem<String>(
-      value: value,
-      child: Text(value),
-    ))
+              value: value,
+              child: Text(value),
+            ))
         .toList();
   }
 
   void _submitForm() async {
-    String img_url_path = 'equipments/${_categoryValue}s/$_categoryNameValue.png';
+    String img_url_path =
+        'equipments/${_categoryValue}s/$_categoryNameValue.png';
     print('aaaaaaaaa:$img_url_path');
     final storageRef = FirebaseStorage.instance.ref().child(img_url_path);
     final imageUrl = await storageRef.getDownloadURL();
@@ -177,8 +214,7 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               DropdownButtonFormField(
-                decoration:
-                const InputDecoration(labelText: 'Category'),
+                decoration: const InputDecoration(labelText: 'Category'),
                 value: _categoryValue,
                 items: _categoryFormField.map((String value) {
                   return DropdownMenuItem<String>(
@@ -189,7 +225,8 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 onChanged: (String? value) {
                   setState(() {
                     _categoryValue = value ?? 'sword';
-                    _categoryNameValue = _categoryNameLists[_categoryValue]![0]; // reset the selected name value
+                    _categoryNameValue = _categoryNameLists[_categoryValue]![
+                        0]; // reset the selected name value
                     _categoryNameItems = _getCategoryNameItems();
                   });
                 },
@@ -200,17 +237,18 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 items: _categoryNameItems,
                 onChanged: (String? value) {
                   setState(() {
-                    _categoryNameValue = value ?? _categoryNameLists[_categoryValue]![0];
+                    _categoryNameValue =
+                        value ?? _categoryNameLists[_categoryValue]![0];
                   });
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: '강화'),
+                decoration: const InputDecoration(labelText: '강화 (고정)'),
                 initialValue: _reinforced.toString(),
                 enabled: false,
               ),
               DropdownButtonFormField(
-                decoration: const InputDecoration(labelText: 'Grade'),
+                decoration: const InputDecoration(labelText: '등급'),
                 value: _gradeValue,
                 items: _gradeFormField.map((String value) {
                   return DropdownMenuItem<String>(
@@ -225,7 +263,7 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 },
               ),
               DropdownButtonFormField(
-                decoration: const InputDecoration(labelText: 'Level'),
+                decoration: const InputDecoration(labelText: '레벨'),
                 value: _levelValue,
                 items: _levelField.map((String value) {
                   return DropdownMenuItem<String>(
@@ -255,7 +293,7 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 },
               ),
               DropdownButtonFormField(
-                decoration: const InputDecoration(labelText: 'Set'),
+                decoration: const InputDecoration(labelText: '세트'),
                 value: _setType,
                 items: _setTypeFormField.map((item) {
                   return DropdownMenuItem(
@@ -285,9 +323,8 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 },
               ),
               TextFormField(
-                decoration:
-                const InputDecoration(labelText: '메인옵 포인트'),
-                initialValue: _mainStatPoint.toString(),
+                decoration: const InputDecoration(labelText: '메인옵 값, 숫자만 입력하세요'),
+                initialValue: '',
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a main point';
@@ -316,9 +353,8 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 },
               ),
               TextFormField(
-                decoration:
-                const InputDecoration(labelText: '부옵1 포인트'),
-                initialValue: _subStatPointOne.toString(),
+                decoration: const InputDecoration(labelText: '부옵1 값, 숫자만 입력하세요'),
+                initialValue: '',
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a sub option 1 point';
@@ -333,6 +369,25 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                   }
                 },
               ),
+              if (_subStatValueOne == 'HPP' || _subStatValueOne == 'DFP' || _subStatValueOne == 'ATP')
+                TextFormField(
+                  decoration: const InputDecoration(labelText: '부옵1 장비점수, 숫자만 입력하세요'),
+                  initialValue: '',
+                  enabled: _subStatValueOne == 'HPP' || _subStatValueOne == 'DFP' || _subStatValueOne == 'ATP',
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a sub option 1 point';
+                    } else if (int.tryParse(value) == 0) {
+                      return 'Please enter a non-zero sub option 1 point';
+                    }
+                    return null;
+                  },
+                  onSaved: (String? value) {
+                    if (value != null) {
+                      _subStatPointOneScore = int.parse(value);
+                    }
+                  },
+                ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(labelText: '부옵2'),
                 value: _subStatValueTwo,
@@ -349,9 +404,8 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 },
               ),
               TextFormField(
-                decoration:
-                const InputDecoration(labelText: '부옵2 포인트'),
-                initialValue: _subStatPointTwo.toString(),
+                decoration: const InputDecoration(labelText: '부옵2 값, 숫자만 입력하세요'),
+                initialValue: '',
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a sub option 2 point';
@@ -366,6 +420,25 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                   }
                 },
               ),
+              if (_subStatValueTwo == 'HPP' || _subStatValueTwo == 'DFP' || _subStatValueTwo == 'ATP')
+                TextFormField(
+                  decoration: const InputDecoration(labelText: '부옵2 장비점수, 숫자만 입력하세요'),
+                  initialValue: '',
+                  enabled: _subStatValueTwo == 'HPP' || _subStatValueTwo == 'DFP' || _subStatValueTwo == 'ATP',
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a sub option 2 point';
+                    } else if (int.tryParse(value) == 0) {
+                      return 'Please enter a non-zero sub option 2 point';
+                    }
+                    return null;
+                  },
+                  onSaved: (String? value) {
+                    if (value != null) {
+                      _subStatPointTwoScore = int.parse(value);
+                    }
+                  },
+                ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(labelText: '부옵3'),
                 value: _subStatValueThree,
@@ -382,9 +455,8 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 },
               ),
               TextFormField(
-                decoration:
-                const InputDecoration(labelText: '부옵3 포인트'),
-                initialValue: _subStatPointThree.toString(),
+                decoration: const InputDecoration(labelText: '부옵3 값, 숫자만 입력하세요'),
+                initialValue: '',
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a sub option 3 point';
@@ -399,6 +471,25 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                   }
                 },
               ),
+              if (_subStatValueThree == 'HPP' || _subStatValueThree == 'DFP' || _subStatValueThree == 'ATP')
+                TextFormField(
+                  decoration: const InputDecoration(labelText: '부옵3 장비점수, 숫자만 입력하세요'),
+                  initialValue: '',
+                  enabled: _subStatValueThree == 'HPP' || _subStatValueThree == 'DFP' || _subStatValueThree == 'ATP',
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a sub option 3 point';
+                    } else if (int.tryParse(value) == 0) {
+                      return 'Please enter a non-zero sub option 3 point';
+                    }
+                    return null;
+                  },
+                  onSaved: (String? value) {
+                    if (value != null) {
+                      _subStatPointThreeScore = int.parse(value);
+                    }
+                  },
+                ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(labelText: '부옵4'),
                 value: _subStatValueFour,
@@ -415,9 +506,8 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                 },
               ),
               TextFormField(
-                decoration:
-                const InputDecoration(labelText: '부옵4 포인트'),
-                initialValue: _subStatPointFour.toString(),
+                decoration: const InputDecoration(labelText: '부옵4 값, 숫자만 입력하세요'),
+                initialValue: '',
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a sub option 4 point';
@@ -432,6 +522,25 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                   }
                 },
               ),
+              if (_subStatValueFour == 'HPP' || _subStatValueFour == 'DFP' || _subStatValueFour == 'ATP')
+                TextFormField(
+                  decoration: const InputDecoration(labelText: '부옵4 장비점수, 숫자만 입력하세요'),
+                  initialValue: '',
+                  enabled: _subStatValueFour == 'HPP' || _subStatValueFour == 'DFP' || _subStatValueFour == 'ATP',
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a sub option 4 point';
+                    } else if (int.tryParse(value) == 0) {
+                      return 'Please enter a non-zero sub option 4 point';
+                    }
+                    return null;
+                  },
+                  onSaved: (String? value) {
+                    if (value != null) {
+                      _subStatPointFourScore = int.parse(value);
+                    }
+                  },
+                ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(labelText: '변환 여부'),
                 value: _convertedFormValue,
