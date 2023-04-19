@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EquipmentFormDialog extends StatefulWidget {
   const EquipmentFormDialog({Key? key}) : super(key: key);
@@ -10,14 +13,14 @@ class EquipmentFormDialog extends StatefulWidget {
 }
 
 class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
-  String _categoryNameValue = '';
+  String _categoryNameValue = '어비스 드레이크 뼈날검';
   late List<String> _categoryNames;
 
   List<DropdownMenuItem<String>>? _categoryNameItems;
   final List<String> _categoryFormField = ['sword', 'helmet', 'armor', 'necklace', 'ring', 'shoes'];
   String _categoryValue = 'sword';
   final Map<String, List<String>> _categoryNameLists = {
-    'sword': ['Excalibur', 'Katana', 'Rapier'],
+    'sword': ['에이션트 드레이크 뼈날검', '검은 영혼의 양날 검','에이키르 제사장의 지팡이','어둠강철 검','저주받은 악마의 양날 검','지옥파멸 정수 오브', '어비스 드레이크 뼈날검'],
     'helmet': ['Plate Helm', 'Leather Hood', 'Chain Coif'],
     'armor': ['Chainmail', 'Platemail', 'Leather Armor'],
     'necklace': ['Amulet of Power', 'Necklace of Sorcery'],
@@ -101,13 +104,17 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
   }
 
   void _submitForm() async {
-    print('UUUUUUUUUUU');
+    String img_url_path = 'equipments/${_categoryValue}s/$_categoryNameValue.png';
+    print('aaaaaaaaa:$img_url_path');
+    final storageRef = FirebaseStorage.instance.ref().child(img_url_path);
+    final imageUrl = await storageRef.getDownloadURL();
+
     // Firebase에 값을 저장
     final user = FirebaseAuth.instance.currentUser;
-
+    final now = DateTime.now();
     double score_equipment = calEquipmentScore();
     final setData = {
-      "name": _name,
+      "name": _categoryNameValue,
       "level": _levelValue,
       "category": _categoryValue,
       "converted": _convertedFormValue,
@@ -127,8 +134,9 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
       "sub_st4_pt": _subStatPointFour,
       "score": score_equipment,
       "status": true,
-      "created_at": FieldValue.serverTimestamp(),
-      "update_at": FieldValue.serverTimestamp(),
+      "created_at": now,
+      "update_at": now,
+      "img_url": imageUrl
     };
     print('SSSSSSS$setData');
 
@@ -137,7 +145,9 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
         .doc(user!.uid)
         .collection(_categoryValue + 's')
         .doc(_categoryValue)
-        .set(setData);
+        .update({
+      "datas": FieldValue.arrayUnion([setData])
+    });
     final scaffoldContext = context;
     if (scaffoldContext != null) {
       ScaffoldMessenger.of(scaffoldContext).showSnackBar(
@@ -192,19 +202,6 @@ class _EquipmentFormDialogState extends State<EquipmentFormDialog> {
                   setState(() {
                     _categoryNameValue = value ?? _categoryNameLists[_categoryValue]![0];
                   });
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: '이름'),
-                initialValue: _name,
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter item name';
-                  }
-                  return null;
-                },
-                onSaved: (String? value) {
-                  _name = value ?? '';
                 },
               ),
               TextFormField(

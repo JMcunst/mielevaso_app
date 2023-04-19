@@ -71,8 +71,10 @@ class _EquipmentPageState extends State<EquipmentPage>
         .doc('sword')
         .get();
     if (swordsSnapshot.exists) {
+      final ts = swordsSnapshot.data()!['datas'];
+      print('eeeeeee$ts');
       return List<Map<String, dynamic>>.from(
-          swordsSnapshot.data()!['swords'] ?? []);
+          swordsSnapshot.data()!['datas'] ?? []);
     }
     return [];
   }
@@ -86,7 +88,7 @@ class _EquipmentPageState extends State<EquipmentPage>
         .get();
     if (armorsSnapshot.exists) {
       return List<Map<String, dynamic>>.from(
-          armorsSnapshot.data()!['armors'] ?? []);
+          armorsSnapshot.data()!['datas'] ?? []);
     }
     return [];
   }
@@ -100,7 +102,7 @@ class _EquipmentPageState extends State<EquipmentPage>
         .get();
     if (helmetsSnapshot.exists) {
       return List<Map<String, dynamic>>.from(
-          helmetsSnapshot.data()!['helmets'] ?? []);
+          helmetsSnapshot.data()!['datas'] ?? []);
     }
     return [];
   }
@@ -114,7 +116,7 @@ class _EquipmentPageState extends State<EquipmentPage>
         .get();
     if (necklacesSnapshot.exists) {
       return List<Map<String, dynamic>>.from(
-          necklacesSnapshot.data()!['necklaces'] ?? []);
+          necklacesSnapshot.data()!['datas'] ?? []);
     }
     return [];
   }
@@ -128,7 +130,7 @@ class _EquipmentPageState extends State<EquipmentPage>
         .get();
     if (ringsSnapshot.exists) {
       return List<Map<String, dynamic>>.from(
-          ringsSnapshot.data()!['rings'] ?? []);
+          ringsSnapshot.data()!['datas'] ?? []);
     }
     return [];
   }
@@ -142,7 +144,7 @@ class _EquipmentPageState extends State<EquipmentPage>
         .get();
     if (shoesSnapshot.exists) {
       return List<Map<String, dynamic>>.from(
-          shoesSnapshot.data()!['shoes'] ?? []);
+          shoesSnapshot.data()!['datas'] ?? []);
     }
     return [];
   }
@@ -206,22 +208,25 @@ class _EquipmentPageState extends State<EquipmentPage>
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset(
-                  'assets/images/main.png',
+                Image.network(
+                  equipment['img_url'],
                   width: 64,
                   height: 64,
                 ),
                 SizedBox(width: 16.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(equipment['name']),
-                    SizedBox(height: 4.0),
-                    Text(equipment['set'].replaceAll('SET_', '')),
-                    SizedBox(width: 8.0),
-                    Text(equipment['grade']),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(equipment['name']),
+                      SizedBox(height: 6.0),
+                      Text(equipment['set'].replaceAll('SET_', '')),
+                      SizedBox(width: 16.0),
+                      Text(equipment['grade']),
+                    ],
+                  ),
                 ),
                 SizedBox(width: 16.0),
                 Column(

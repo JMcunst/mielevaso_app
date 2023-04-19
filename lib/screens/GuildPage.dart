@@ -231,7 +231,7 @@ class _GuildPageState extends State<GuildPage> {
           Card(
             child: ListTile(
               leading: Icon(Icons.group),
-              title: Text('Guild Member 2'),
+              title: Text('공덱 찾기'),
               subtitle: Text('Level 25'),
               trailing: Icon(Icons.more_vert),
             ),
