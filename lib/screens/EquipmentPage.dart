@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'EquipmentFormDialog.dart';
+import 'EquipmentDetailDialog.dart';
 
 class EquipmentPage extends StatefulWidget {
   const EquipmentPage({Key? key}) : super(key: key);
@@ -203,42 +204,53 @@ class _EquipmentPageState extends State<EquipmentPage>
       itemBuilder: (context, index) {
         final equipment = equipments[index];
         return Card(
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Image.network(
-                  equipment['img_url'],
-                  width: 64,
-                  height: 64,
-                ),
-                SizedBox(width: 16.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          child: InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => EquipmentDetailDialog(equipment: equipment),
+              );
+            },
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.network(
+                      equipment['img_url'],
+                      width: 64,
+                      height: 64,
+                    ),
+                  ),
+                  SizedBox(width: 16.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(equipment['name']),
+                        SizedBox(height: 6.0),
+                        Text('세트: ${equipment['set'].replaceAll('SET_', '')}'),
+                        SizedBox(width: 16.0),
+                        Text(equipment['grade']),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 16.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(equipment['name']),
-                      SizedBox(height: 6.0),
-                      Text(equipment['set'].replaceAll('SET_', '')),
-                      SizedBox(width: 16.0),
-                      Text(equipment['grade']),
+                      Text('장비 점수'),
+                      SizedBox(width: 8.0),
+                      Text(
+                        equipment['score'].toStringAsFixed(1),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
-                ),
-                SizedBox(width: 16.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text('장비 점수'),
-                    SizedBox(width: 8.0),
-                    Text(
-                      equipment['score'].toStringAsFixed(1),
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
