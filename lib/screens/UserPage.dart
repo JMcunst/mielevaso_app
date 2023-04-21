@@ -7,7 +7,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../apis/google_auth_api.dart';
-import '../secrets/email.dart';
+import 'UserFormRequestEmailDialog.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({Key? key, required this.title}) : super(key: key);
@@ -167,7 +167,6 @@ class _UserPageState extends State<UserPage> {
           );
         }
       }
-
       // 다이얼로그 닫기
       Navigator.of(scaffoldContext!).pop();
     }
@@ -383,71 +382,7 @@ class _UserPageState extends State<UserPage> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('User Information'),
-                      content: SingleChildScrollView(
-                        child: Form(
-                          key: _mailFormKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                controller: _nameController,
-                                decoration: const InputDecoration(labelText: 'Name'),
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _serverController,
-                                decoration: const InputDecoration(labelText: 'Server'),
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a server';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _guildNameController,
-                                decoration: const InputDecoration(labelText: 'Guild Name'),
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a guild name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _commentController,
-                                decoration: const InputDecoration(labelText: 'Comment'),
-                                validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a comment';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('CANCEL'),
-                        ),
-                        ElevatedButton(
-                          onPressed: _submitMailForm,
-                          child: const Text('SUBMIT'),
-                        ),
-                      ],
-                    );
+                    return UserFormRequestEmailDialog();
                   },
                 );
               },
