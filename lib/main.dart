@@ -1,13 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mielevaso_app/screens/LoginPage.dart';
-import 'package:mielevaso_app/screens/UserPage.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:mielevaso_app/screens/MainPage.dart';
-import 'dart:developer';
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -20,11 +16,12 @@ Future<void> main() async{
 }
 
 ThemeData appTheme = ThemeData(
-    primaryColor: Colors.purple,
-    /* Colors.tealAccent,*/
-    secondaryHeaderColor: Colors.blue /* Colors.teal*/
-  // fontFamily:
+  primaryColor: Color(0xFFA9907E),
+  secondaryHeaderColor: Color(0xFFF3DEBA),
+  colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFF675D50)),
+  backgroundColor: Color(0xFFABC4AA),
 );
+
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
