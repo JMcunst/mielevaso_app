@@ -263,6 +263,20 @@ class _EquipmentPageState extends State<EquipmentPage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('장비 목록'),
+        actions: [
+          IconButton(
+            iconSize: 30,
+            icon: Icon(Icons.add),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return EquipmentFormDialog();
+                },
+              );
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -324,19 +338,6 @@ class _EquipmentPageState extends State<EquipmentPage>
           _buildTabView(shoesList),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // showDialog 띄우기
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return EquipmentFormDialog();
-            },
-          );
-        },
-        child: Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
