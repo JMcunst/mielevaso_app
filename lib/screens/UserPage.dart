@@ -6,6 +6,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mielevaso_app/widgets/user_info_widget.dart';
 import '../apis/google_auth_api.dart';
 import 'UserFormRequestEmailDialog.dart';
 
@@ -110,9 +111,8 @@ class _UserPageState extends State<UserPage> {
   }
 
   void _getGuildName() async {
-    final guildNameDocs = await FirebaseFirestore.instance
-        .collection('guild')
-        .get();
+    final guildNameDocs =
+        await FirebaseFirestore.instance.collection('guild').get();
 
     List<String> guildNames = guildNameDocs.docs.map((doc) => doc.id).toList();
     guildNames.sort();
@@ -176,7 +176,7 @@ class _UserPageState extends State<UserPage> {
     if (_mailFormKey.currentState!.validate()) {
       // Email the form data
       final user = await GoogleAuthApi.signIn();
-      if (user==null) return;
+      if (user == null) return;
       final email = user.email;
       final auth = await user.authentication;
       final token = auth.accessToken!;
@@ -194,7 +194,8 @@ class _UserPageState extends State<UserPage> {
         ..from = Address('no.reply.ezcominc@gmail.com', 'Jmcunst')
         ..recipients.add('xnslqjtmghaf@gmail.com')
         ..subject = 'Please Enroll my Guild'
-        ..text = 'Name: $name\nServer: $server\nGuild Name: $guildName\nComment: $comment';
+        ..text =
+            'Name: $name\nServer: $server\nGuild Name: $guildName\nComment: $comment';
 
       try {
         final sendReport = await send(message, smtpServer);
@@ -289,11 +290,13 @@ class _UserPageState extends State<UserPage> {
                                 mode: Mode.MENU,
                                 showSelectedItems: true,
                                 items: _guildNameFields,
-                                selectedItem: _guildName, // 초기에 선택될 값
+                                selectedItem: _guildName,
+                                // 초기에 선택될 값
                                 dropdownSearchDecoration: const InputDecoration(
                                   labelText: "Select Guild Name",
                                   hintText: "search your guild name",
-                                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.grey, size: 24),
+                                  suffixIcon: Icon(Icons.arrow_drop_down,
+                                      color: Colors.grey, size: 24),
                                 ),
                                 onChanged: (value) {
                                   setState(() {
@@ -389,6 +392,7 @@ class _UserPageState extends State<UserPage> {
               child: const Text('Enter Information'),
             ),
           ),
+          UserInfoWidget(),
         ]));
   }
 }

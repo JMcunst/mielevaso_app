@@ -5,6 +5,7 @@ import 'package:mielevaso_app/screens/EquipmentPage.dart';
 import 'package:mielevaso_app/screens/GuildNotFoundPage.dart';
 import 'package:mielevaso_app/screens/GuildPage.dart';
 import 'package:mielevaso_app/screens/UserPage.dart';
+import 'package:mielevaso_app/screens/user_info_page.dart';
 
 class HomePage extends StatefulWidget {
   final int initialPageIndex;
@@ -20,7 +21,8 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _children = [
     const GuildPage(title: 'my-guild'),
     const EquipmentPage(),
-    const UserPage(title: 'UserPage'),
+    // const UserPage(title: 'UserPage'),
+    const UserInfoPage(),
   ];
 
   @override
