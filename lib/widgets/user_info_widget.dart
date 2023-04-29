@@ -22,7 +22,7 @@ class UserInfoWidget extends StatelessWidget {
             alignment: Alignment.topLeft,
             margin: const EdgeInsets.only(bottom: 10.0, left: 8.0, top: 6.0),
             child: const Text(
-              "Next days",
+              "User Setting",
               style: TextStyle(
                 color: CustomColors.textColorBlack,
                 fontSize: 17.0,
