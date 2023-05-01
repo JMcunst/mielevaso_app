@@ -9,10 +9,10 @@ class UserInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 428,
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: CustomColors.dividerLine.withAlpha(150),
+        color: CustomColors.cardColor.withAlpha(40),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -22,7 +22,7 @@ class UserInfoWidget extends StatelessWidget {
             alignment: Alignment.topLeft,
             margin: const EdgeInsets.only(bottom: 10.0, left: 8.0, top: 6.0),
             child: const Text(
-              "User Setting",
+              "상세 보기",
               style: TextStyle(
                 color: CustomColors.textColorBlack,
                 fontSize: 17.0,
@@ -40,7 +40,32 @@ class UserInfoWidget extends StatelessWidget {
                   children: [
                     const SizedBox(
                       child: Text(
-                        "testtest",
+                        "기사단 가입 신청",
+                        style: TextStyle(
+                          color: CustomColors.textColorBlack,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Image.asset("assets/icons/all.png"),
+                    ),
+                    Text("°")
+                  ],
+                ),
+              ),
+              Container(
+                height: 50,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(left: 2, right: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(
+                      child: Text(
+                        "신규 기사단 신청",
                         style: TextStyle(
                           color: CustomColors.textColorBlack,
                           fontSize: 13,
@@ -59,7 +84,57 @@ class UserInfoWidget extends StatelessWidget {
               Container(
                 height: 1,
                 color: CustomColors.dividerLine.withAlpha(255),
-              )
+              ),
+              Container(
+                height: 50,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(left: 2, right: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(
+                      child: Text(
+                        "인포메이션",
+                        style: TextStyle(
+                          color: CustomColors.textColorBlack,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Image.asset("assets/icons/all.png"),
+                    ),
+                    Text("°")
+                  ],
+                ),
+              ),
+              Container(
+                height: 50,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(left: 2, right: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(
+                      child: Text(
+                        "로그아웃",
+                        style: TextStyle(
+                          color: CustomColors.textColorBlack,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Image.asset("assets/icons/all.png"),
+                    ),
+                    Text("신청")
+                  ],
+                ),
+              ),
             ],
           )
         ],
