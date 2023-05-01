@@ -19,7 +19,16 @@ class _UserInfoPageState extends State<UserInfoPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Profile'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // 수정 아이콘 클릭 시 동작할 코드
+            },
+            icon: Icon(Icons.edit),
+          ),
+        ],
       ),
+
       body: SingleChildScrollView(
         child: Column(
           children: [
