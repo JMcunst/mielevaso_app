@@ -16,7 +16,7 @@ class _UserPvpPageState extends State<UserPvpPage> {
     final size = AppLayout.getSize(context);
     return SizedBox(
       width: size.width,
-      height: 200,
+      height: 120,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
