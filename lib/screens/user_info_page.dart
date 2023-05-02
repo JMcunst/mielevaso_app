@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mielevaso_app/screens/user_pvp_page.dart';
 import 'package:mielevaso_app/widgets/user_info_widget.dart';
 
+import 'UserFormDialog.dart';
+
 class UserInfoPage extends StatefulWidget {
   const UserInfoPage({Key? key}) : super(key: key);
 
@@ -22,7 +24,12 @@ class _UserInfoPageState extends State<UserInfoPage> {
         actions: [
           IconButton(
             onPressed: () {
-              // 수정 아이콘 클릭 시 동작할 코드
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return UserFormDialog();
+                },
+              );
             },
             icon: Icon(Icons.edit),
           ),
