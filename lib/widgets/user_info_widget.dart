@@ -52,7 +52,7 @@ class UserInfoWidget extends StatelessWidget {
                       height: 30,
                       child: Image.asset("assets/icons/all.png"),
                     ),
-                    Text("°")
+                    const Text("°")
                   ],
                 ),
               ),
@@ -77,7 +77,7 @@ class UserInfoWidget extends StatelessWidget {
                       height: 30,
                       child: Image.asset("assets/icons/all.png"),
                     ),
-                    Text("°")
+                    const Text("°")
                   ],
                 ),
               ),
@@ -106,7 +106,7 @@ class UserInfoWidget extends StatelessWidget {
                       height: 30,
                       child: Image.asset("assets/icons/all.png"),
                     ),
-                    Text("°")
+                    const Text("°")
                   ],
                 ),
               ),
@@ -131,7 +131,7 @@ class UserInfoWidget extends StatelessWidget {
                       height: 30,
                       child: Image.asset("assets/icons/all.png"),
                     ),
-                    Text("신청")
+                    const Text("신청")
                   ],
                 ),
               ),

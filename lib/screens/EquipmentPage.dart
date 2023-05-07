@@ -208,7 +208,8 @@ class _EquipmentPageState extends State<EquipmentPage>
             onTap: () {
               showDialog(
                 context: context,
-                builder: (context) => EquipmentDetailDialog(equipment: equipment),
+                builder: (context) =>
+                    EquipmentDetailDialog(equipment: equipment),
               );
             },
             child: Padding(
@@ -224,28 +225,28 @@ class _EquipmentPageState extends State<EquipmentPage>
                       height: 64,
                     ),
                   ),
-                  SizedBox(width: 16.0),
+                  const SizedBox(width: 16.0),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(equipment['name']),
-                        SizedBox(height: 6.0),
+                        const SizedBox(height: 6.0),
                         Text('세트: ${equipment['set'].replaceAll('SET_', '')}'),
-                        SizedBox(width: 16.0),
+                        const SizedBox(width: 16.0),
                         Text(equipment['grade']),
                       ],
                     ),
                   ),
-                  SizedBox(width: 16.0),
+                  const SizedBox(width: 16.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('장비 점수'),
-                      SizedBox(width: 8.0),
+                      const Text('장비 점수'),
+                      const SizedBox(width: 8.0),
                       Text(
                         equipment['score'].toStringAsFixed(1),
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -266,12 +267,12 @@ class _EquipmentPageState extends State<EquipmentPage>
         actions: [
           IconButton(
             iconSize: 30,
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return EquipmentFormDialog();
+                  return const EquipmentFormDialog();
                 },
               );
             },
