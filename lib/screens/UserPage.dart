@@ -186,10 +186,7 @@ class _UserPageState extends State<UserPage> {
       final guildName = _guildNameController.text;
       final comment = _commentController.text;
 
-      // final smtpServer = gmail('no.reply.ezcominc@gmail.com', GMAIL_PASSWORD_NEW);
-      // final smtpServer = gmailRelaySaslXoauth2('no.reply.ezcominc@gmail.com', token);
       final smtpServer = gmailSaslXoauth2('no.reply.ezcominc@gmail.com', token);
-      // log('PWDPWDPWDPWD:$GMAIL_PASSWORD_NEW');
       final message = Message()
         ..from = Address('no.reply.ezcominc@gmail.com', 'Jmcunst')
         ..recipients.add('xnslqjtmghaf@gmail.com')
@@ -207,7 +204,6 @@ class _UserPageState extends State<UserPage> {
   }
 
   bool isItemDisabled(String s) {
-    //return s.startsWith('I');
 
     if (s.startsWith('I')) {
       return true;
